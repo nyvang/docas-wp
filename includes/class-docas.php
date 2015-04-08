@@ -1,8 +1,6 @@
 <?php
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-docas-settings.php';
-
 /**
- * The file that defines the core plugin class
+ * The file that defines the core DoCAS class
  *
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
@@ -17,11 +15,11 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-docas-sett
 /**
  * The core plugin class.
  *
- * This is used to define internationalization, admin-specific hooks, and
+ * This is used to define internationalization, shortcodes, admin-specific hooks, and
  * public-facing site hooks.
  *
  * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
+ * version of the DoCAS plugin.
  *
  * @since      1.0.0
  * @package    Docas
@@ -31,12 +29,12 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-docas-sett
 class Docas {
 
 	/**
-	 * The loader that's responsible for maintaining and registering all hooks that power
+	 * The loader is responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Docas_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Docas_Loader    $loader    Maintains and registers all hooks for the DoCAS plugin.
 	 */
 	protected $loader;
 
@@ -45,7 +43,7 @@ class Docas {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string    $plugin_name    The string used to uniquely identify the DoCAS plugin.
 	 */
 	protected $plugin_name;
 
@@ -54,12 +52,12 @@ class Docas {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string    $version    The current version of DoCAS.
 	 */
 	protected $version;
 
 	/**
-	 * Define the core functionality of the plugin.
+	 * Define the DoCAS core functionality.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
@@ -80,17 +78,16 @@ class Docas {
 	}
 
 	/**
-	 * Load the required dependencies for this plugin.
+	 * Load the required dependencies.
 	 *
-	 * Include the following files that make up the plugin:
+	 * Include the following files that make up the logic:
 	 *
-	 * - Docas_Loader. Orchestrates the hooks of the plugin.
+	 * - Docas_Loader. Orchestrates the hooks of the DoCAS plugin.
 	 * - Docas_i18n. Defines internationalization functionality.
 	 * - Docas_Admin. Defines all hooks for the admin area.
-	 * - Docas_Public. Defines all hooks for the public side of the site.
+	 * - Docas_Public. Defines all hooks and shortcodes for the public side of the DoCAS plugin.
 	 *
-	 * Create an instance of the loader which will be used to register the hooks
-	 * with WordPress.
+	 * Create an instance of the loader used to register the hooks with WordPress.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -98,19 +95,19 @@ class Docas {
 	private function load_dependencies() {
 
 		/**
-		 * The class responsible for orchestrating the actions and filters of the
+		 * The class is responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-docas-loader.php';
 
 		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
+		 * The class is responsible for defining internationalization functionality
+		 * of the DoCAS plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-docas-i18n.php';
 
 		/**
-		 * The class responsible for defining all actions that occur in the admin area.
+		 * The class responsible for defining all admin area actions - Options, Menus etc.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-docas-admin.php';
 
@@ -144,7 +141,7 @@ class Docas {
 
 	/**
 	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
+	 * of the DoCAS plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -156,12 +153,13 @@ class Docas {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'docas_register_settings' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'docas_options_page' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'docas_register_options_page' );
 	}
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
+	 * of the DoCAS plugin.
+	 * Add all shortcodes handling the ajax requests for the DoCAS data
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -172,10 +170,11 @@ class Docas {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		add_shortcode( 'docas', $plugin_public, 'docas_shortcode' );
-		add_shortcode( 'test', $plugin_public, 'test_shortcode' );
-
+		
+		add_shortcode( 'docas_all_courses', array('Docas_Public' , 'get_all_courses') ); 
+		// TODO: Create the different shortcodes ('Udbyder', 'Kurser', 'Skabeloner', 'Undervisere', 'Steder', 'Aktivitetslister', 'Kurv (tilmelding)');
 	}
+
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
@@ -187,28 +186,28 @@ class Docas {
 	}
 
 	/**
-	 * The name of the plugin used to uniquely identify it within the context of
+	 * The name of the DoCAS plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
 	 * @since     1.0.0
-	 * @return    string    The name of the plugin.
+	 * @return    string    The name of the DoCAS plugin.
 	 */
 	public function get_plugin_name() {
 		return $this->plugin_name;
 	}
 
 	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
+	 * The reference to the class that orchestrates the hooks with DoCAS plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Docas_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Docas_Loader    Orchestrates the hooks of the DoCAS plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;
 	}
 
 	/**
-	 * Retrieve the version number of the plugin.
+	 * Retrieve the DoCAS version number.
 	 *
 	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.

@@ -66,10 +66,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-docas.php';
  *
  * @since    1.0.0
  */
-function run_plugin_name() {
+function run_docas_plugin() {
 
-	$plugin = new Docas();
-	$plugin->run();
+	$docas = new Docas();
+	$docas->run();
 
 }
-run_plugin_name();
+run_docas_plugin();

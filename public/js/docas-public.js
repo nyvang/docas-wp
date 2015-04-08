@@ -35,7 +35,7 @@
 			};
 	});
 
-	function getDoCASdata () {
+	/*function getDoCASdata () {
 		$.getJSON("http://docas.dk/api/courses/56e7c52f-32c8-4f6b-9ae8-4da7463ab2cd/49307ff0-edf4-48c1-b7a0-a45000e9df5f?callback=?", function (result) {          
 	      for (var i = 0; i < result.length; i++) {
 	          var name = "<td>" + result[i].name + "</td>";
@@ -49,6 +49,6 @@
 	          $("#allCourses").append("<tr>" + name + start + slut + underviser + sted + lokale + pris + pladser + "</tr>");
 	      }
 	  });
-	}
+	}*/
 
 })( jQuery );
