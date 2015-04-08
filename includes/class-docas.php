@@ -116,7 +116,7 @@ class Docas {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-docas-public.php';
-
+		
 		$this->loader = new Docas_Loader();
 
 	}
@@ -182,6 +182,7 @@ class Docas {
 	 * @since    1.0.0
 	 */
 	public function run() {
+
 		$this->loader->run();
 	}
 

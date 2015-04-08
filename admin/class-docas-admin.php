@@ -105,6 +105,11 @@ class Docas_Admin {
       <small>Hint: All key formats is xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</small>
       <hr />
       <form method='post' action='options.php'>
+      	<?php 
+      		if( function_exists('wp_nonce_field') ) {
+      			wp_nonce_field( 'docas-manage-admin-options_' . $this->version);
+      		}
+      	?>
         <?php settings_fields( 'docas-user-settings-group' ); ?>
         <?php do_settings_sections( 'docas-user-settings-group' ); ?>
         
@@ -130,6 +135,7 @@ class Docas_Admin {
 		        </td>
 	        </tr>
 	      </table>
+
         <?php submit_button(); ?>
       </form>
     </div>
