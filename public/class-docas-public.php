@@ -27,7 +27,7 @@ class Docas_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string    $plugin_name    	The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,7 +36,7 @@ class Docas_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string    $version    			The current version of this plugin.
 	 */
 	private $version;
 
@@ -44,8 +44,8 @@ class Docas_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param    string    $plugin_name     The name of the plugin.
+	 * @param    string    $version    			The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
@@ -72,56 +72,46 @@ class Docas_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/docas-public.js', array( 'jquery' ), $this->version, false );
 	}
 
-		
-		// Add Shortcode
-	function docas_shortcode( ) {
 
-		// Code
-		// Pattern: docas.dk/api/courses/{Read-Only API Key}/{Vendor ID}				
-	  // get_option('docas_url') .'/'. get_option('vendor_id').'/'. get_option('read-only-api-key')
-	  $json = file_get_contents('http://docas.dk/api/courses/56e7c52f-32c8-4f6b-9ae8-4da7463ab2cd/49307ff0-edf4-48c1-b7a0-a45000e9df5f');
-	  return json_decode($json);
-	}
 
-	// TODO: Use wordpress´ built in JSON support instead
-	/* EXAMPLE
-	 * // accept incoming POST data, assumed to be in JSON notation
-	 * $input = file_get_contents('php://input', 1000000);
-	 * $value = $json->decode($input);
+	/**
+	 * The [docas_list_all] shortcode is responsible for fetching any data type where all results are needed.
+	 * 	 * Available datatypes: Vendor, Courses, Instructors, Locations, Activitylists, 
+	 *													Basket (ordering), Coursemodels, Courselists
+	 *
+	 * @since    1.0.1
+	 * @param    array    $atts    			The datatype to request, and the id of the div container. 		default: courses
+	 * @return 	 string   (HTML + JS)   The shortcode output - i.e. the data from the DoCAS server
 	 */
+	public function docas_list_all_shortcode( $atts, $content = null) {
 
-	// Add Shortcode
- 	function test_shortcode( ) {
+		// Attributes
+		$a = shortcode_atts( array(
+				'name' => 'instructors'
+			), $atts );
 
-		// Code
-		// Pattern: docas.dk/api/courses/{Read-Only API Key}/{Vendor ID}				
-	  // get_option('docas_url') .'/'. get_option('vendor_id').'/'. get_option('read-only-api-key')
-	 
-	  return "Pattern: docas.dk/api/courses/{Read-Only API Key}/{Vendor ID}";
-	}
+		$data_type = esc_attr($a['name']);
+		$vendor_id = get_option('docas_vendor_id');
+		$read_only_api_key = get_option('docas_read_only_api_key');
 
-
-		
-	function get_all_courses() {
-		return '<script>
-		jQuery.noConflict();
-			jQuery(document).ready(function () {
-				jQuery.getJSON("http://docas.dk/api/courses/56e7c52f-32c8-4f6b-9ae8-4da7463ab2cd/49307ff0-edf4-48c1-b7a0-a45000e9df5f?callback=?", function (result) {
-				for (var i = 0; i < result.length; i++) {
-				  var navn = "<td>" + result[i].name + "</td>";
-				  var start = "<td>" + result[i].start + "</td>";
-				  var slut = "<td>" + result[i].end + "</td>";
-				  var underviser = "<td>" + result[i].instructorName + "</td>";
-				  var sted = "<td>" + result[i].locationName + "</td>";
-				  var lokale = "<td>" + result[i].locationRoom + "</td>";
-				  var pris = "<td>" + result[i].price + "</td>";
-				  var pladser = "<td>" + result[i].maxParticipants + "</td>";
-				  jQuery("#allCourses").append("<tr>" + navn + start + slut + underviser + sted + lokale + pris
-				      + pladser + "</tr>");
-				}
+		$content = 
+		'<script>
+				jQuery(document).ready(function () {
+				  jQuery.getJSON("http://docas.dk/api/' . $data_type . '/' . $vendor_id . '/' . $read_only_api_key . '?callback=?", function (result) {
+					  var data = [];
+					  for (i=0; i < result.length; i++) { 
+							data = result[i];
+					  	jQuery("#' . $data_type . '").append( "<tr>" );
+					  	jQuery.each(data, function ( index, value ) {
+					  		jQuery("#' . $data_type . '").append( "<td>" + value + "</td>" );
+					  	});
+							jQuery("#' . $data_type . '").append( "</tr>" );		  
+					  }
+					});
 				});
-      });
 		</script>';
+		
+	return '<div class="DocasDataList" id="' . $data_type . '"></div>' . $content;
 	}
-
 }
+

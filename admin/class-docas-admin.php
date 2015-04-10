@@ -138,6 +138,49 @@ class Docas_Admin {
 
         <?php submit_button(); ?>
       </form>
+      <br />
+      <h3>Shortcodes</h3>
+      <form>
+      	<tr valign='top'>
+		        <th scope='row'>Enable/disable shortcodes</th>
+		        <td>
+		        	<label for="all-students">Show all courses</label>
+      				<input type="checkbox" value="Show all courses" name="all-courses">
+      			</td>
+
+      			<td>
+      				<label for="all-students">Show single course</label>
+      				<input type="checkbox" value="Show single course" name="single-course">
+      			</td>
+
+      			<td>
+      				<label for="all-students">Show all catagories</label>
+      				<input type="checkbox" value="Show all catagories" name="all-catagories">
+      			</td>
+
+      			<td>
+      				<label for="all-students">Show all students</label>
+      				<input type="checkbox" value="Show all students" name="all-students">
+      			</td>
+
+      			<td>
+      				<label for="all-students">Show single student</label>
+      				<input type="checkbox" value="Show single student" name="single-student">
+      			</td>
+
+      			<td>
+      				<label for="all-students">Show single location</label>
+      				<input type="checkbox" value="Show single location" name="single-locations">
+      			</td>
+	        </tr>	
+
+	        <td>
+      				<label for="all-students">Show all locations</label>
+      				<input type="checkbox" value="Show all locations" name="all-locations">
+      			</td>
+
+      		<?php submit_button(); ?>
+      </form>
     </div>
  <?php }
 }

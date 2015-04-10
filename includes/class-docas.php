@@ -171,8 +171,8 @@ class Docas {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		
-		add_shortcode( 'docas_all_courses', array('Docas_Public' , 'get_all_courses') ); 
-		// TODO: Create the different shortcodes ('Udbyder', 'Kurser', 'Skabeloner', 'Undervisere', 'Steder', 'Aktivitetslister', 'Kurv (tilmelding)');
+		//add_shortcode( 'docas_list_one', array('Docas_Public' , 'docas_list_one_shortcode') ); 
+		add_shortcode( 'docas_list_all', array('Docas_Public' , 'docas_list_all_shortcode') ); 
 	}
 
 
